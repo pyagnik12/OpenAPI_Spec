@@ -1,0 +1,116 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Movie Screening Times Service
+  description: This API allows users to browse, add, and delete movie screening times as part of an online movie booking app.
+
+paths:
+  /screenings:
+    get:
+      summary: Get the list of movie screening times
+      parameters:
+        - name: date
+          in: query
+          description: Filter screenings by date (e.g., "2024-03-01")
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: movieId
+          in: query
+          description: Filter screenings by movie ID
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    screeningId:
+                      type: string
+                    movieId:
+                      type: string
+                    startTime:
+                      type: string
+                      format: date-time
+                    theater:
+                      type: string
+                    availability:
+                      type: integer
+        '404':
+          description: Screenings not found
+
+    post:
+      summary: Add a new movie screening time
+      requestBody:
+        description: Information about the new screening
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                movieId:
+                  type: string
+                date:
+                  type: string
+                  format: date
+                startTime:
+                  type: string
+                  format: date-time
+                theater:
+                  type: string
+              required:
+                - movieId
+                - date
+                - startTime
+                - theater
+      responses:
+        '200':
+          description: Screening added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Message indicating that the screening was added
+                  screeningId:
+                    type: string
+                    description: Unique identifier for the added screening
+        '404':
+          description: Could not add new movie screening time
+
+
+  /screenings/{screeningId}:
+    delete:
+      summary: Delete a movie screening time
+      parameters:
+        - name: screeningId
+          in: path
+          description: ID of the screening to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Screening successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Message indicating that the screening was successfully deleted
+
+        '404':
+          description: Screening not found
+
